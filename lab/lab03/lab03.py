@@ -19,6 +19,13 @@ def flatten(s: list) -> list:
     ['m', 'i', 'n', 'm', 'e', 'w', 't', 'a', 't', 'i', 'o', 'n', 's']
     """
     "*** YOUR CODE HERE ***"
+    flattened_list = []
+    for i in s:
+        if type(i) == list:
+            flattened_list.extend(flatten(i))
+        else:
+            flattened_list.append(i)
+    return flattened_list
 
 
 def close_list(s: list[int], k: int) -> list[int]:
@@ -33,7 +40,7 @@ def close_list(s: list[int], k: int) -> list[int]:
     [2, 4, 3, 5]
     """
     assert k >= 0
-    return [___ for i in range(len(s)) if ___]
+    return [s[i] for i in range(len(s)) if abs(s[i] - i) <= k]
 
 
 def remove_first(lst: list, elem: int) -> list:
@@ -49,6 +56,10 @@ def remove_first(lst: list, elem: int) -> list:
     []
     """
     "*** YOUR CODE HERE ***"
+    if elem in lst:
+        lst.remove(elem)
+    return lst
+
 
 def sort(lst: list) -> list:
     """This function returns a sorted version of the list lst.
@@ -63,6 +74,12 @@ def sort(lst: list) -> list:
     []
     """
     "*** YOUR CODE HERE ***"
+    sorted_lst = []
+    for _ in range(len(lst)):
+        min_num = min(lst)
+        remove_first(lst, min_num)
+        sorted_lst.append(min_num)
+    return sorted_lst
 
 
 def make_onion(f, g):
@@ -91,11 +108,11 @@ def make_onion(f, g):
     """
     def can_reach(x, y, limit: int) -> bool:
         if limit < 0:
-            return ____
+            return False
         elif x == y:
-            return ____
+            return True
         else:
-            return can_reach(____, ____, limit - 1) or can_reach(____, ____, limit - 1)
+            return can_reach(f(x), y, limit - 1) or can_reach(g(x), y, limit - 1)
     return can_reach
 
 
@@ -107,12 +124,12 @@ def make_func_repeater(f, x: int):
     >>> increment_repeater(5)
     6
     """
-    def repeat(____):
-        if ____:
-            return ____
+    def repeat(n):
+        if n == 1:
+            return f(x)
         else:
-            return ____
-    return ____
+            return f(repeat(n-1))
+    return repeat
 
 
 def ten_pairs(n: int) -> int:
@@ -130,6 +147,14 @@ def ten_pairs(n: int) -> int:
     True
     """
     "*** YOUR CODE HERE ***"
+    count_5 = 0
+    if count_digit(n, 5) > 1:
+        count_5 = count_digit(n, 5) * (count_digit(n, 5) - 1) / 2
+    return count_digit(n, 1) * count_digit(n, 9) + \
+            count_digit(n, 2) * count_digit(n, 8) + \
+            count_digit(n, 3) * count_digit(n, 7) + \
+            count_digit(n, 4) * count_digit(n, 6) + \
+            int(count_5)
 
 
 def count_digit(n: int, digit: int) -> int:
@@ -143,4 +168,14 @@ def count_digit(n: int, digit: int) -> int:
     True
     """
     "*** YOUR CODE HERE ***"
-
+    count = 0
+    if n <= 9 and n >=0:
+        if n%10 == digit:
+            count = 1
+        else:
+            count = 0
+    elif n%10 == digit:
+        count += 1 + count_digit(n//10, digit)
+    else:
+        count += count_digit(n//10, digit)
+    return count
