@@ -31,9 +31,9 @@ def a_plus_abs_b(a, b):
     3
     """
     if b < 0:
-        f = _____
+        f = lambda a, b: a - b
     else:
-        f = _____
+        f = lambda a, b: a + b
     return f(a, b)
 
 def a_plus_abs_b_syntax_check():
@@ -67,6 +67,17 @@ def hailstone(n):
     1
     """
     "*** YOUR CODE HERE ***"
+    print(n)
+    count = 1
+    while n != 1:
+        count += 1
+        if n%2 == 0:
+            n /= 2
+            print(int(n))
+        else:
+            n = 3 * n + 1
+            print(int(n))
+    return count
 
 
 def product(n, term):
@@ -89,6 +100,10 @@ def product(n, term):
     162
     """
     "*** YOUR CODE HERE ***"
+    result = 1
+    for i in range(1, n+1):
+        result *= term(i)
+    return result
 
 
 def make_repeater(f, n):
@@ -105,6 +120,11 @@ def make_repeater(f, n):
     390625
     """
     "*** YOUR CODE HERE ***"
+    def inner(x):
+        for i in range(n):
+            x = f(x)
+        return x
+    return inner
 
 
 def largest_factor(n):
@@ -118,6 +138,14 @@ def largest_factor(n):
     1
     """
     "*** YOUR CODE HERE ***"
+    if n%2 == 0:
+        return int(n/2)
+    else:
+        for i in range(3, n):
+            if n%i == 0:
+                return int(n/i)
+            break
+        return 1
 
 
 def accumulate(fuse, start, n, term):
@@ -140,6 +168,10 @@ def accumulate(fuse, start, n, term):
     19
     """
     "*** YOUR CODE HERE ***"
+    result = start
+    for i in range(1, n+1):
+        result = fuse(result, term(i))
+    return result
 
 
 def summation_using_accumulate(n, term):
@@ -154,7 +186,7 @@ def summation_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(summation_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    return ____
+    return accumulate(add, 0, n, term)
 
 
 def product_using_accumulate(n, term):
@@ -169,5 +201,5 @@ def product_using_accumulate(n, term):
     >>> [type(x).__name__ for x in ast.parse(inspect.getsource(product_using_accumulate)).body[0].body]
     ['Expr', 'Return']
     """
-    return ____
+    return accumulate(mul, 1, n, term)
 
