@@ -36,6 +36,31 @@ def inventory_pickup(inventory: list, items: list, capacity: int) -> list:
     ['world', 'hi', 'hello']
     """
     "*** YOUR CODE HERE ***"
+    # import copy
+    # if inventory is items:
+    #     items = copy.deepcopy(inventory)
+    items_copied = items[:]  # 内容替换，而不是引用赋值
+    for i in items_copied:
+        # inventory = [j for j in inventory if i != j]
+        inventory[:] = list(filter(lambda x: x != i, inventory))  # 不加[:]就是引用了，不是inventory了
+        inventory.append(i)
+    if len(inventory) > capacity:
+        inventory = inventory[len(inventory)-capacity:]
+    return inventory         
+
+
+    # ANSWER
+    # pickup_order = items[:]
+
+    # for item in pickup_order:
+    #     inventory[:] = [i for i in inventory if i != item]
+    #     inventory.append(item)
+
+    # overflow = len(inventory) - capacity
+    # if overflow > 0:
+    #     inventory[:] = inventory[overflow:]
+
+    # return inventory
 
 
 def berry_finder(t):
@@ -56,6 +81,12 @@ def berry_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    if label(t) == 'berry':
+        return True
+    for i in branches(t):
+        if berry_finder(i):
+            return True
+    return False
 
 
 def size_of_tree(t):
@@ -73,6 +104,13 @@ def size_of_tree(t):
     7
     """
     "*** YOUR CODE HERE ***"
+    count = 1
+    for i in branches(t):
+        if is_tree(i):
+            count += size_of_tree(i)
+        else:
+            count += 1
+    return count
 
 
 def make_path(t, p):
@@ -110,18 +148,20 @@ def make_path(t, p):
           7
     """
     assert p[0] == label(t), 'It is not possible to make this path'
-    if len(p) == 1:
-        return ____
+    if len(p) == 1:  # base case
+        return t
     new_branches = []
     found_p1 = False
     for b in branches(t):
-        if ____:
+        if label(b) == p[1]:
             "*** YOUR CODE HERE ***"
+            new_branches.append(make_path(b, p[1:]))
+            found_p1 = True
         else:
             new_branches.append(b)
     if not found_p1:
-        new_branches.append(make_path(____, ____))
-    return tree(____, new_branches)
+        new_branches.append(make_path(tree(p[1]), p[1:]))
+    return tree(label(t), new_branches)
 
 
 def merge(incr_a, incr_b):
@@ -144,6 +184,26 @@ def merge(incr_a, incr_b):
     iter_a, iter_b = iter(incr_a), iter(incr_b)
     next_a, next_b = next(iter_a, None), next(iter_b, None)
     "*** YOUR CODE HERE ***"
+    while next_a != None and next_b != None:
+        if next_a < next_b :
+            yield next_a
+            next_a = next(iter_a, None)
+        elif next_a > next_b:
+            yield next_b
+            next_b = next(iter_b, None)
+        else:  # equal
+            yield next_a
+            next_a = next(iter_a, None)
+            next_b = next(iter_b, None)
+    if next_a == None:
+        while next_b != None:
+            yield next_b
+            next_b = next(iter_b, None)
+    if next_b == None:
+        while next_a != None:
+            yield next_a
+            next_a = next(iter_a, None)
+
 
 
 def yield_paths(t, target):
@@ -182,10 +242,10 @@ def yield_paths(t, target):
     [[0, 2], [0, 2, 1, 2]]
     """
     if label(t) == target:
-        yield ____
+        yield [target]
     for b in branches(t):
-        for ____ in ____:
-            yield ____
+        for path in yield_paths(b, target):
+            yield [label(t)] + path
 
 
 passphrase = 'REPLACE_THIS_WITH_PASSPHRASE'
