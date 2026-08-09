@@ -230,18 +230,21 @@ class Mint:
 
     def create(self, coin):
         "*** YOUR CODE HERE ***"
-
+        return coin(self.year)  # Why not coin.year?
+        
     def update(self) -> None:
         "*** YOUR CODE HERE ***"
+        self.year = Mint.present_year  # What are the differences between them?
 
 class Coin:
     cents = None # will be provided by subclasses, but not by Coin itself
 
-    def __init__(self, year: int):
+    def __init__(self, year: int):  # The year comes from Mint
         self.year = year
 
     def worth(self) -> int:
         "*** YOUR CODE HERE ***"
+        return self.cents + max(0, Mint.present_year - self.year - 50)
 
 class Nickel(Coin):
     cents = 5
