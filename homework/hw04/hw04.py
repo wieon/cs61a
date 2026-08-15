@@ -41,6 +41,10 @@ class VendingMachine:
     def __init__(self, product: str, price: int):
         """Set the product and its price, as well as other instance attributes."""
         "*** YOUR CODE HERE ***"
+        self.product = product
+        self.price = price
+        self.stock = 0
+        self.balance = 0
 
     def restock(self, n: int) -> str:
         """Add n to the stock and return a message about the updated stock level.
@@ -48,6 +52,8 @@ class VendingMachine:
         E.g., Current candy stock: 3
         """
         "*** YOUR CODE HERE ***"
+        self.stock += n
+        return f'Current {self.product} stock: {self.stock}'
 
     def add_funds(self, n: int) -> str:
         """If the machine is out of stock, return a message informing the user to restock
@@ -60,6 +66,10 @@ class VendingMachine:
         E.g., Current balance: $4
         """
         "*** YOUR CODE HERE ***"
+        if self.stock == 0 and n != 0:
+            return f'Nothing left to vend. Please restock. Here is your ${n}.'
+        self.balance += n
+        return f'Current balance: ${self.balance}'
 
     def vend(self) -> str:
         """Dispense the product if there is sufficient stock and funds and
@@ -73,6 +83,21 @@ class VendingMachine:
               Please add $3 more funds.
         """
         "*** YOUR CODE HERE ***"
+        if self.stock == 0:
+            return 'Nothing left to vend. Please restock.'
+        else:
+            if self.balance >= self.price:
+                change = self.balance % self.price
+                self.stock -= (self.balance // self.price)
+                self.balance = 0
+                if change != 0:
+                    return f'Here is your {self.product} and ${change} change.'
+                else:
+                    return f'Here is your {self.product}.'
+            elif self.balance < self.price:
+                return f'Please add ${self.price - self.balance} more funds.'
+        
+
 
 
 def cumulative_mul(t: Tree) -> None:
@@ -89,7 +114,12 @@ def cumulative_mul(t: Tree) -> None:
     Tree(5040, [Tree(60, [Tree(3), Tree(4), Tree(5)]), Tree(42, [Tree(7)])])
     """
     "*** YOUR CODE HERE ***"
-
+    if t.is_leaf():
+        return Tree(t.label)
+    else:
+        for b in t.branches:
+            cumulative_mul(b)  # process subtree first
+            t.label *= b.label
 
 def prune_small(t: Tree, n: int) -> None:
     """Prune the tree mutatively, keeping only the n branches
@@ -108,11 +138,11 @@ def prune_small(t: Tree, n: int) -> None:
     >>> t3
     Tree(6, [Tree(1), Tree(3, [Tree(1), Tree(2)])])
     """
-    while ____:
-        largest = max(____, key=____)
-        ____
+    while len(t.branches) > n:
+        largest = max(t.branches, key=lambda x: x.label)
+        t.branches.remove(largest)
     for b in t.branches:
-        ____
+        prune_small(b, n)
 
 
 class Pet:
@@ -145,10 +175,14 @@ class Cat(Pet):
     def __init__(self, name: str, owner: str, lives: int = 9) -> None:
         assert type(lives) == int and  lives > 0
         "*** YOUR CODE HERE ***"
+        super().__init__(name, owner)
+        self.lives = lives
+        self.is_alive = True
 
     def talk(self) -> None:
         """A cat says 'Meow!' when asked to talk."""
         "*** YOUR CODE HERE ***"
+        print('Meow!')
 
     def lose_life(self) -> str | None:
         """A cat can only lose a life if it has at least one
@@ -156,6 +190,12 @@ class Cat(Pet):
         variable becomes False.
         """
         "*** YOUR CODE HERE ***"
+        if self.lives == 0:
+            self.is_alive = False
+        else:
+            self.lives -= 1
+        if self.is_alive == False:
+            return 'Cat is dead x_x'
 
     def eat(self, thing: str) -> None:
         self.talk()
